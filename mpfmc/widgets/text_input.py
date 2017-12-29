@@ -2,22 +2,21 @@
 Text Input widget
 =================
 
-The :class:`MpfTextInput` widget is used to all the player (or an operator) to
+The :class:`MpfTextInput` widget is used to allow the player (or an operator) to
 enter text. It can be linked to a :class:`Text` widget which displays the text
 that's been entered so far.
 
 """
 from collections import deque
-from typing import Optional
-from kivy.clock import Clock
 
-from mpfmc.uix.widget import WidgetContainer
+from kivy.clock import Clock
+from typing import Optional
+
 from mpfmc.widgets.text import Text
 
 MYPY = False
 if MYPY:   # pragma: no cover
     from mpfmc.core.mc import MpfMc
-
 
 class MpfTextInput(Text):
     widget_type_name = 'text_input'
@@ -139,7 +138,13 @@ class MpfTextInput(Text):
     def shift(self, places: int=1, force: bool=False, **kwargs) -> None:
         del kwargs
         if self.active or force:
-            self.char_list.rotate(-places)
+            if len(self.linked_text_widget.text) == self.config['max_chars'] & force==False:
+                if self.char_list[0] == 'end'
+                    self.jump('back')
+                elif self.char_list[0] == 'back':
+                    self.jump('end')
+            else:
+                self.char_list.rotate(-places)
 
             if self.char_list[0] == 'end':
                 self.font_size = self.config['font_size'] / 2
@@ -179,7 +184,7 @@ class MpfTextInput(Text):
                 self.linked_text_widget.text + self.char_list[0])
 
             if len(self.linked_text_widget.text) == self.config['max_chars']:
-                self.complete()
+                self.jump('end')
 
     def set_relative_position(self, *args) -> None:
         del args
